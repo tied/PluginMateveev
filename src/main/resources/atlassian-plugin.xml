@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="spring-tutorial"/>
+  <!-- add our web resources -->
+  <web-resource key="spring-tutorial-resources" name="spring-tutorial Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource type="download" name="spring-tutorial.css" location="/css/spring-tutorial.css"/>
+    <resource type="download" name="spring-tutorial.js" location="/js/spring-tutorial.js"/>
+    <resource type="download" name="images/" location="/images"/>
+    <context>spring-tutorial</context>
+  </web-resource>
+  <servlet name="My Servlet 1" i18n-name-key="my-servlet-1.name" key="my-servlet-1" class="ru.matveev.alexey.plugins.spring.servlet.MyServlet1">
+    <description key="my-servlet-1.description">The My Servlet 1 Plugin</description>
+    <url-pattern>/myservlet1</url-pattern>
+  </servlet>
+  <servlet name="My Servlet 2" i18n-name-key="my-servlet-2.name" key="my-servlet-2" class="ru.matveev.alexey.plugins.spring.servlet.MyServlet2">
+    <description key="my-servlet-2.description">The My Servlet 2 Plugin</description>
+    <url-pattern>/myservlet2</url-pattern>
+  </servlet>
+</atlassian-plugin>
