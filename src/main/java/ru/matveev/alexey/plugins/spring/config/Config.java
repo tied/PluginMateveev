@@ -1,26 +1,31 @@
 package ru.matveev.alexey.plugins.spring.config;
 
+
+import com.atlassian.jira.config.ConstantsManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import org.springframework.context.annotation.Scope;
 import ru.matveev.alexey.plugins.spring.aop.HijackAroundMethod;
 import ru.matveev.alexey.plugins.spring.aop.HijackBeforeMethod;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import ru.matveev.alexey.plugins.spring.api.HelloWorld;
 import ru.matveev.alexey.plugins.spring.impl.HelloWorldImpl;
 
-@Component
+import javax.inject.Named;
+
+@Named
 @Configuration
 public class Config{
 
 
     @Bean(name = "helloWorld")
     @Scope("prototype")
-    public HelloWorld helloWorld(@ComponentImport ApplicationProperties applicationProperties) {
-        return new HelloWorldImpl(applicationProperties);
+    public HelloWorld helloWorld(ApplicationProperties applicationProperties,
+                                 JiraAuthenticationContext jiraAuthenticationContext,
+                                 ConstantsManager constantsManager) {
+        return new HelloWorldImpl(applicationProperties, jiraAuthenticationContext, constantsManager);
     }
 
     @Bean(name="hijackBeforeMethodBean")
@@ -35,9 +40,11 @@ public class Config{
 
     @Bean (name = "helloWorldBeforeProxy")
     @Scope("prototype")
-    public ProxyFactoryBean proxyBeforeFactoryBean(@ComponentImport ApplicationProperties applicationProperties) {
+    public ProxyFactoryBean proxyBeforeFactoryBean(ApplicationProperties applicationProperties,
+                                                   JiraAuthenticationContext jiraAuthenticationContext,
+                                                   ConstantsManager constantsManager) {
         ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-        proxyFactoryBean.setTarget(helloWorld(applicationProperties));
+        proxyFactoryBean.setTarget(helloWorld(applicationProperties,jiraAuthenticationContext,constantsManager));
         proxyFactoryBean.setProxyTargetClass(true);
         proxyFactoryBean.setInterceptorNames("hijackBeforeMethodBean");
         return proxyFactoryBean;
@@ -45,9 +52,11 @@ public class Config{
 
     @Bean (name = "helloWorldAroundProxy")
     @Scope("prototype")
-    public ProxyFactoryBean proxyAroundFactoryBean(@ComponentImport ApplicationProperties applicationProperties) {
+    public ProxyFactoryBean proxyAroundFactoryBean(ApplicationProperties applicationProperties,
+                                                   JiraAuthenticationContext jiraAuthenticationContext,
+                                                   ConstantsManager constantsManager) {
         ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-        proxyFactoryBean.setTarget(helloWorld(applicationProperties));
+        proxyFactoryBean.setTarget(helloWorld(applicationProperties,jiraAuthenticationContext,constantsManager));
         proxyFactoryBean.setProxyTargetClass(true);
         proxyFactoryBean.setInterceptorNames("hijackAroundMethodBean");
         return proxyFactoryBean;
